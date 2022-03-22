@@ -29,3 +29,5 @@
    - git add . : jika semua file
 4. Menyimpan perubahan di commited session/kedalam git 
    - git commit -m "pesan mengenai perubahan yang dilakukan"
+5. Melihat history commit
+   - git log
