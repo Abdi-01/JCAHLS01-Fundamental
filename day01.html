@@ -1,0 +1,23 @@
+<!-- <script> : untuk menjalankan javascript didalam file html -->
+<script>
+    // prompt : untuk menerima input, dan tipe datanya selalu string 
+    // console.log(input);
+    // alert : menampilkan data
+
+    // Aplikasi verifikasi usia untuk membuat SIM
+    // - aturan Minimal usia membuat SIM 17 tahun
+    // Step by Step Algorithm
+    // 1. input usia => prompt
+    // 2. usia diperiksa => conditional
+    // 3. apabila usia melebihi batas minimal maka akan terverifikasi => alert
+    // 4. apabila usia kurang dari batas minimal maka akan gagal => alert
+
+    let inputUsia = prompt("Masukkan Usia Anda :");
+
+    if (parseInt(inputUsia) >= 17) {
+        alert("Usia sukses terverifikasi")
+    } else {
+        alert("Usia gagal terverifikasi")
+    }
+
+</script>
