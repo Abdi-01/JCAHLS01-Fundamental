@@ -16,6 +16,7 @@ let dbProduct = [
 
 let selectedIdx = null;
 
+//////////////////////////////////// Management Product //////////////////////////////////////////
 function handleSubmit() {
     // 1. Mengambil data
     let form = document.getElementById("form-product")
@@ -44,8 +45,27 @@ function handleSubmit() {
     printProduct();
 }
 
-function printProduct() {
-    let htmlElement = dbProduct.map((val, idx) => {
+function handleSave() {
+    // 1. ambil value dari form
+    let name = document.getElementById("new-name").value;
+    let stock = parseInt(document.getElementById("new-stock").value);
+    let price = parseInt(document.getElementById("new-price").value);
+
+    // 2. menyimpan data ke dbProduct berdasarkan selectedIdx
+    dbProduct[selectedIdx].name = name;
+    dbProduct[selectedIdx].stock = stock;
+    dbProduct[selectedIdx].price = price;
+
+    // 3. selectedIdx di reset
+    selectedIdx = null;
+
+    // 4. mencetak ulang table datanya
+    printProduct()
+
+}
+
+function printProduct(data = dbProduct) {
+    let htmlElement = data.map((val, idx) => {
         if (selectedIdx == idx) {
             return `<tr>
             <td>${val.sku}</td>
@@ -54,7 +74,7 @@ function printProduct() {
             <td>${val.category}</td>
             <td><input type="number" id="new-stock" value="${val.stock}"/></td>
             <td><input type="number" id="new-price" value="${val.price}"/></td>
-            <td><button  type="button" >Save</button>
+            <td><button  type="button" onclick="handleSave()">Save</button>
                 <button type="button" >Cancel</button>
             </td>
         </tr>`
@@ -73,7 +93,7 @@ function printProduct() {
         }
     })
     document.getElementById("table-list").innerHTML = htmlElement.join("")
-    console.log(htmlElement)
+    // console.log(htmlElement)
 }
 
 function handleEdit(idx) {
@@ -89,3 +109,36 @@ function handleDelete(idx) {
 }
 
 printProduct();
+
+//////////////////////////// Filter Product ///////////////////////////////
+
+function handleFilter() {
+    // 1. get value dari form filter
+    let form = document.getElementById("form-filter")
+    let filterName = form.elements[0].value;
+    let filterMin = parseInt(form.elements[1].value);
+    let filterMax = parseInt(form.elements[2].value);
+    let filterCategory = form.elements[3].value;
+    console.log("Cek input : ", filterName, filterMin, filterMax, filterCategory);
+    // 2. proses filter data
+    let dataFilter = dbProduct.filter((value, index) => {
+        if (filterName.length > 0) {
+            return value.name.toLowerCase().includes(filterName.toLowerCase())
+        }
+    })
+
+    console.log(dataFilter)
+
+    // 3. mencetak data
+    printProduct(dataFilter);
+
+    // 4. reset form filter
+    form.elements[0].value="";
+    form.elements[1].value="";
+    form.elements[2].value="";
+    form.elements[3].value="null";
+}
+
+function handleReset(){
+    printProduct()
+}
