@@ -46,22 +46,28 @@ function handleSubmit() {
     printProduct();
 }
 
-function handleSave() {
+function handleSave(sku) {
+    let idx = dbProduct.findIndex(val => val.sku == sku);
     // 1. ambil value dari form
     let name = document.getElementById("new-name").value;
     let stock = parseInt(document.getElementById("new-stock").value);
     let price = parseInt(document.getElementById("new-price").value);
 
     // 2. menyimpan data ke dbProduct berdasarkan selectedIdx
-    dbProduct[selectedIdx].name = name;
-    dbProduct[selectedIdx].stock = stock;
-    dbProduct[selectedIdx].price = price;
+    dbProduct[idx].name = name;
+    dbProduct[idx].stock = stock;
+    dbProduct[idx].price = price;
 
     // 3. selectedIdx di reset
     selectedIdx = null;
 
     // 4. mencetak ulang table datanya
-    printProduct()
+    if (dataFilter.length > 0) {
+        dataFilter = dbProduct.filter(val => val.sku == sku);
+        printProduct(dataFilter);
+    } else {
+        printProduct();
+    }
 
 }
 
@@ -75,7 +81,7 @@ function printProduct(data = dbProduct) {
             <td>${val.category}</td>
             <td><input type="number" id="new-stock" value="${val.stock}"/></td>
             <td><input type="number" id="new-price" value="${val.price}"/></td>
-            <td><button  type="button" onclick="handleSave()">Save</button>
+            <td><button  type="button" onclick="handleSave('${val.sku}')">Save</button>
                 <button type="button" >Cancel</button>
             </td>
         </tr>`
