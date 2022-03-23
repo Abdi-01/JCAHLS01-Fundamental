@@ -15,7 +15,7 @@ let dbProduct = [
 ]
 
 let selectedIdx = null;
-let dataFilter=[];
+let dataFilter = [];
 
 //////////////////////////////////// Management Product //////////////////////////////////////////
 function handleSubmit() {
@@ -88,7 +88,7 @@ function printProduct(data = dbProduct) {
             <td>${val.stock.toLocaleString()}</td>
             <td>IDR. ${val.price.toLocaleString()}</td>
             <td><button  type="button" onclick="handleEdit(${idx})">Edit</button>
-                <button type="button" onclick="handleDelete(${idx})">Delete</button>
+                <button type="button" onclick="handleDelete('${val.sku}')">Delete</button>
             </td>
         </tr>`
         }
@@ -99,17 +99,25 @@ function printProduct(data = dbProduct) {
 
 function handleEdit(idx) {
     selectedIdx = idx;
-    if(dataFilter.length>0){
+    if (dataFilter.length > 0) {
         printProduct(dataFilter);
-    }else{
+    } else {
         printProduct();
     }
 }
 
-function handleDelete(idx) {
+function handleDelete(sku) {
+    console.log(sku)
+    let idx = dbProduct.findIndex((val) => val.sku == sku)
+    console.log(idx)
     if (confirm("Yakin mau menghapus produk ini ?")) {
         dbProduct.splice(idx, 1);
-        printProduct();
+        if (dataFilter.length > 0) {
+            dataFilter = dbProduct.filter(val => val.sku == sku);
+            printProduct(dataFilter);
+        } else {
+            printProduct();
+        }
     }
 }
 
@@ -138,12 +146,13 @@ function handleFilter() {
     printProduct(dataFilter);
 
     // 4. reset form filter
-    form.elements[0].value="";
-    form.elements[1].value="";
-    form.elements[2].value="";
-    form.elements[3].value="null";
+    form.elements[0].value = "";
+    form.elements[1].value = "";
+    form.elements[2].value = "";
+    form.elements[3].value = "null";
 }
 
-function handleReset(){
-    printProduct()
+function handleReset() {
+    printProduct();
+    selectedIdx = null
 }
