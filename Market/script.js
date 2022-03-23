@@ -8,11 +8,23 @@ class Product {
         this.price = _price;
     }
 }
+class Cart extends Product {
+    constructor(_sku, _img, _name, _price, _qty) {
+        super(_sku, _img, _name, null, null, _price)
+        this.qty = _qty;
+        this.subTotal = _price * _qty;
+    }
+}
 
 let dbProduct = [
     new Product("SKU-1-126374", "https://cdn1-production-images-kly.akamaized.net/_rs9uvS4NgkmKEzerOrUdbe_QoM=/640x640/smart/filters:quality(75):strip_icc():format(jpeg)/kly-media-production/medias/1170319/original/065589700_1457942078-a99626_kids-911_9-oreo.jpg", "Oreo", "Food", 25, 7500),
     new Product("SKU-2-198374", "https://id-live-05.slatic.net/p/cc79d0a7f3820ad5916a224e02915312.jpg_720x720q80.jpg_.webp", "Pocari", "Drink", 50, 10000)
 ]
+
+let dbCart = [
+    new Cart("SKU-1-126374", "https://cdn1-production-images-kly.akamaized.net/_rs9uvS4NgkmKEzerOrUdbe_QoM=/640x640/smart/filters:quality(75):strip_icc():format(jpeg)/kly-media-production/medias/1170319/original/065589700_1457942078-a99626_kids-911_9-oreo.jpg", "Oreo", 7500, 3)
+]
+console.log(dbCart)
 
 let selectedIdx = null;
 let dataFilter = [];
@@ -143,6 +155,10 @@ function handleFilter() {
     dataFilter = dbProduct.filter((value, index) => {
         if (filterName.length > 0) {
             return value.name.toLowerCase().includes(filterName.toLowerCase())
+        } else if (filterMin >= 0 && filterMax >= 0) {
+            return value.price >= filterMin && value.price <= filterMax
+        } else if (filterCategory != "null") {
+            return value.category == filterCategory
         }
     })
 
@@ -162,3 +178,27 @@ function handleReset() {
     printProduct();
     selectedIdx = null
 }
+
+////////////////////////// Manage Transaction //////////////////////////////////
+
+function printKeranjang() {
+    let htmlElement = dbCart.map((val, index) => {
+        return `
+        <tr>
+            <td>${index + 1}</td>
+            <td>${val.sku}</td>
+            <td><img src="${val.img}" width="75px"></td>
+            <td>${val.name}</td>
+            <td>IDR. ${val.price.toLocaleString()}</td>
+            <td>${val.qty.toLocaleString()}</td>
+            <td>IDR. ${val.subTotal.toLocaleString()}</td>
+            <td>
+            <button type="button" >Delete</button>
+            </td>
+        </tr>
+        `
+    })
+
+    document.getElementById("cart-list").innerHTML = htmlElement.join("");
+}
+printKeranjang()
