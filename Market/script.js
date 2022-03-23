@@ -15,6 +15,7 @@ let dbProduct = [
 ]
 
 let selectedIdx = null;
+let dataFilter=[];
 
 //////////////////////////////////// Management Product //////////////////////////////////////////
 function handleSubmit() {
@@ -98,7 +99,11 @@ function printProduct(data = dbProduct) {
 
 function handleEdit(idx) {
     selectedIdx = idx;
-    printProduct();
+    if(dataFilter.length>0){
+        printProduct(dataFilter);
+    }else{
+        printProduct();
+    }
 }
 
 function handleDelete(idx) {
@@ -121,7 +126,7 @@ function handleFilter() {
     let filterCategory = form.elements[3].value;
     console.log("Cek input : ", filterName, filterMin, filterMax, filterCategory);
     // 2. proses filter data
-    let dataFilter = dbProduct.filter((value, index) => {
+    dataFilter = dbProduct.filter((value, index) => {
         if (filterName.length > 0) {
             return value.name.toLowerCase().includes(filterName.toLowerCase())
         }
