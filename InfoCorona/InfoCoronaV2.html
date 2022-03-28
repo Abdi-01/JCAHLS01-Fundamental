@@ -120,10 +120,19 @@
                 } else if (this.status == "Rapid") {
                     return `<select id="result-${this.antrian}" onchange="handleToRapid('${this.antrian}')">
                         <option value="null">Pilih</option>
-                        <option value="positif">Positif</option>
-                        <option value="negatif">Negatif</option>
+                        <option value="Positif">Positif</option>
+                        <option value="Negatif">Negatif</option>
+                        </select>
+                        `
+                } else if (this.status == "Positif") {
+                    return `<select id="report-${this.antrian}" onchange="handleToRapid('${this.antrian}')">
+                        <option value="null">Pilih</option>
+                        <option value="Listed">Sembuh</option>
+                        <option value="Dead">Meninggal</option>
                     </select>
                     `
+                } else if (this.status == "Negatif") {
+                    return `<button  type="button" onclick="handleToRapid('${this.antrian}','Listed')">To Warga</button>`
                 }
             }
         }
@@ -150,7 +159,7 @@
         }
 
         printData("Listed", "tb_warga");
-        
+
         const handleSubmit = () => {
             let num = 10;
             let text = num.toString(36);
@@ -166,7 +175,7 @@
             let nama = document.getElementById("inputNama").value;
             let asal = document.getElementById("inputAsal").value;
             let tujuan = document.getElementById("inputTujuan").value;
-            
+
             console.log(nama, asal, tujuan)
             console.log(Boolean(nama), Boolean(asal), Boolean(tujuan))
             if (nama && asal && tujuan) {
@@ -174,7 +183,7 @@
             } else {
                 alert("isi semua form")
             }
-            
+
             // 3. merefresh ulang tampilan
             printData();
             document.getElementById("inputNama").value = "";
@@ -184,13 +193,28 @@
 
         const handleToRapid = (kode_antrian, status) => {
             let dataIdx = data.findIndex(val => val.antrian == kode_antrian);
-            let result = document.getElementById(`result-${kode_antrian}`);
 
-            data[dataIdx].status = status;
+            console.log(kode_antrian, status)
+            if (status) {
+                data[dataIdx].status = status;
+            } else {
+                let result = document.getElementById(`result-${kode_antrian}`).value;
+                // // console.log(result,report)
+                if (result == "Positif" || result == "Negatif") {
+                    console.log(result)
+                    data[dataIdx].status = result;
+                    printData("Positif", "tb_positif");
+                    printData("Negatif", "tb_negatif");
+                }
+
+                // let report = document.getElementById(`report-${kode_antrian}`).value;
+                // console.log(kode_antrian, report)
+                // if (report == "Listed" || report == "Dead") {
+                //     data[dataIdx].status = report;
+                // }
+            }
             printData("Listed", "tb_warga");
             printData("Rapid", "tb_rapid");
-            // printData("Positif", "tb_posisitf");
-            // printData("Negatif", "tb_negaif");
         }
 
     </script>
