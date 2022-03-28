@@ -125,6 +125,12 @@
                         </select>
                         `
                 } else if (this.status == "Positif") {
+                    console.log(`<select id="report-${this.antrian}" onchange="handleToRapid('${this.antrian}')">
+                        <option value="null">Pilih</option>
+                        <option value="Listed">Sembuh</option>
+                        <option value="Dead">Meninggal</option>
+                    </select>
+                    `)
                     return `<select id="report-${this.antrian}" onchange="handleToRapid('${this.antrian}')">
                         <option value="null">Pilih</option>
                         <option value="Listed">Sembuh</option>
@@ -198,23 +204,26 @@
             if (status) {
                 data[dataIdx].status = status;
             } else {
-                let result = document.getElementById(`result-${kode_antrian}`).value;
-                // // console.log(result,report)
-                if (result == "Positif" || result == "Negatif") {
-                    console.log(result)
-                    data[dataIdx].status = result;
-                    printData("Positif", "tb_positif");
-                    printData("Negatif", "tb_negatif");
+                let result = document.getElementById(`result-${kode_antrian}`);
+                let report = document.getElementById(`report-${kode_antrian}`);
+                // untuk memeriksa, element htmlnya ada atau tidak
+                if (result || report) {
+                    
+                    if (result) {
+                        console.log(result)
+                        data[dataIdx].status = result.value;
+                    }
+                    
+                    console.log(kode_antrian, report)
+                    if (report) {
+                        data[dataIdx].status = report.value;
+                    }
                 }
-
-                // let report = document.getElementById(`report-${kode_antrian}`).value;
-                // console.log(kode_antrian, report)
-                // if (report == "Listed" || report == "Dead") {
-                //     data[dataIdx].status = report;
-                // }
             }
             printData("Listed", "tb_warga");
             printData("Rapid", "tb_rapid");
+            printData("Positif", "tb_positif");
+            printData("Negatif", "tb_negatif");
         }
 
     </script>
