@@ -108,6 +108,9 @@ function printProduct(data = dbProduct) {
             <td><button  type="button" onclick="handleEdit(${idx})">Edit</button>
                 <button type="button" onclick="handleDelete('${val.sku}')">Delete</button>
             </td>
+            <td>
+                <button type="button" onclick="handleBuy('${val.sku}')">🛒 Buy</button>
+            </td>
         </tr>`
         }
     })
@@ -200,5 +203,18 @@ function printKeranjang() {
     })
 
     document.getElementById("cart-list").innerHTML = htmlElement.join("");
+}
+
+function handleBuy(sku) {
+    console.log(sku)
+    let cartIdx = dbCart.findIndex(val => val.sku == sku);
+    console.log(cartIdx)
+    let dataProduct = dbProduct.filter(val => val.sku == sku);
+    if (cartIdx >= 0) {
+        dbCart[cartIdx].qty += 1
+    } else {
+        dbCart.push(new Cart(dataProduct[0].sku, dataProduct[0].img, dataProduct[0].name, dataProduct[0].price, 1))
+    }
+    printKeranjang()
 }
 printKeranjang()
