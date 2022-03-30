@@ -97,6 +97,31 @@
                 </tbody>
             </table>
         </fieldset>
+        <fieldset>
+            <legend>Checkout</legend>
+            <table>
+                <tbody>
+                    <tr>
+                        <td>
+                            <h4>Total Pembayaran</h4>
+                        </td>
+                        <td>
+                            <h4 id="total">Rp. 0,-</h4>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <h4>Uang Pembayaran</h4>
+                        </td>
+                        <td>
+                            <input type="number" id="payment"/>
+                            <button type="button" onclick="handlePay()">Payment</button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+            <h6 id="message"></h6>
+        </fieldset>
     </div>
 </body>
 <script src="./script.js"></script>

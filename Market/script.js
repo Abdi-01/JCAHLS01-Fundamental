@@ -22,7 +22,7 @@ let dbProduct = [
 ]
 
 let dbCart = [
-    new Cart("SKU-1-126374", "https://cdn1-production-images-kly.akamaized.net/_rs9uvS4NgkmKEzerOrUdbe_QoM=/640x640/smart/filters:quality(75):strip_icc():format(jpeg)/kly-media-production/medias/1170319/original/065589700_1457942078-a99626_kids-911_9-oreo.jpg", "Oreo", 7500, 3)
+    // new Cart("SKU-1-126374", "https://cdn1-production-images-kly.akamaized.net/_rs9uvS4NgkmKEzerOrUdbe_QoM=/640x640/smart/filters:quality(75):strip_icc():format(jpeg)/kly-media-production/medias/1170319/original/065589700_1457942078-a99626_kids-911_9-oreo.jpg", "Oreo", 7500, 3)
 ]
 console.log(dbCart)
 
@@ -184,8 +184,12 @@ function handleReset() {
 
 ////////////////////////// Manage Transaction //////////////////////////////////
 
+let total = 0;
+
 function printKeranjang() {
+    total = 0;
     let htmlElement = dbCart.map((val, index) => {
+        total += val.subTotal;
         return `
         <tr>
             <td>${index + 1}</td>
@@ -196,25 +200,73 @@ function printKeranjang() {
             <td>${val.qty.toLocaleString()}</td>
             <td>IDR. ${val.subTotal.toLocaleString()}</td>
             <td>
-            <button type="button" >Delete</button>
+            <button type="button" onclick="handleDeleteCart('${val.sku}')">Delete</button>
             </td>
         </tr>
         `
     })
 
+    // totalPayment();
+    document.getElementById("total").innerHTML = `Rp. ${total.toLocaleString()},-`
     document.getElementById("cart-list").innerHTML = htmlElement.join("");
+}
+
+// fungsi terpisah
+function totalPayment() {
+    let total = 0;
+    dbCart.forEach(val => total += val.subTotal)
+
+    document.getElementById("total").innerHTML = `Rp. ${total.toLocaleString()},-`
+}
+
+function handlePay() {
+    let pay = parseInt(document.getElementById("payment").value)
+
+    let count = pay - total
+    if (count < 0) {
+        document.getElementById("message").innerHTML = "Maaf, uang anda kurang ⚠️"
+    } else {
+        dbCart = [];
+        printKeranjang();
+        document.getElementById("message").innerHTML = `Kembalian anda ${count.toLocaleString()}<br/>Terima kasih ✅`
+        document.getElementById("payment").value = ""
+    }
 }
 
 function handleBuy(sku) {
     console.log(sku)
     let cartIdx = dbCart.findIndex(val => val.sku == sku);
     console.log(cartIdx)
-    let dataProduct = dbProduct.filter(val => val.sku == sku);
+    let dataIdx = dbProduct.findIndex(val => val.sku == sku);
     if (cartIdx >= 0) {
-        dbCart[cartIdx].qty += 1
+        if (dbProduct[dataIdx].stock > 0) {
+            dbCart[cartIdx].qty += 1
+            dbProduct[dataIdx].stock -= 1
+        } else {
+            // dbProduct.splice(dataIdx, 1)
+            alert("Out Of Stock")
+        }
+        dbCart[cartIdx].subTotal = dbCart[cartIdx].qty * dbCart[cartIdx].price
     } else {
-        dbCart.push(new Cart(dataProduct[0].sku, dataProduct[0].img, dataProduct[0].name, dataProduct[0].price, 1))
+        dbCart.push(new Cart(dbProduct[dataIdx].sku, dbProduct[dataIdx].img, dbProduct[dataIdx].name, dbProduct[dataIdx].price, 1))
+        dbProduct[dataIdx].stock -= 1
     }
+    printProduct()
+    printKeranjang()
+}
+
+const handleDeleteCart = (sku) => {
+    let cartIdx = dbCart.findIndex(val => val.sku == sku);
+    let dataIdx = dbProduct.findIndex(val => val.sku == sku);
+
+    dbProduct[dataIdx].stock += 1
+    if (dbCart[cartIdx].qty > 1) {
+        dbCart[cartIdx].qty -= 1
+        dbCart[cartIdx].subTotal = dbCart[cartIdx].qty * dbCart[cartIdx].price
+    } else {
+        dbCart.splice(cartIdx, 1)
+    }
+    printProduct()
     printKeranjang()
 }
 printKeranjang()
