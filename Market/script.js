@@ -26,8 +26,22 @@ let dbCart = [
 ]
 console.log(dbCart)
 
+let dbTransactions = [];
+let username = "";
+
 let selectedIdx = null;
 let dataFilter = [];
+
+/**
+ * 1. Menyimpan data transaksi, setiap user berhasil bayar
+ * 2. Data yang harus disimpan : username, date, totalPayment, change, detail
+ * 3. reset ulang username, fieldset checkout
+ * 
+ */
+
+function handleCustomer() {
+    username = document.getElementById("inUsername").value;
+}
 
 //////////////////////////////////// Management Product //////////////////////////////////////////
 function handleSubmit() {
@@ -226,6 +240,17 @@ function handlePay() {
     if (count < 0) {
         document.getElementById("message").innerHTML = "Maaf, uang anda kurang ⚠️"
     } else {
+
+        let data = {
+            idTransaction: dbTransactions.length + 1,
+            username,
+            date: `${new Date().getDate()}-${new Date().getMonth() + 1}-${new Date().getFullYear()}`,
+            total,
+            change: count,
+            detail: [...dbCart]
+        }
+        dbTransactions.push(data);
+        console.table(dbTransactions);
         dbCart = [];
         printKeranjang();
         document.getElementById("message").innerHTML = `Kembalian anda ${count.toLocaleString()}<br/>Terima kasih ✅`

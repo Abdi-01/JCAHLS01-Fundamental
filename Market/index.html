@@ -40,6 +40,11 @@
             <button type="button" onclick="handleSubmit()">Submit</button>
         </fieldset>
         <fieldset>
+            <legend>Customer</legend>
+            <input type="text" id="inUsername" />
+            <button type="button" onclick="handleCustomer()">Login</button>
+        </fieldset>
+        <fieldset>
             <legend>Filter Data</legend>
             <form id="form-filter">
                 <label>By Name</label>
@@ -114,7 +119,7 @@
                             <h4>Uang Pembayaran</h4>
                         </td>
                         <td>
-                            <input type="number" id="payment"/>
+                            <input type="number" id="payment" />
                             <button type="button" onclick="handlePay()">Payment</button>
                         </td>
                     </tr>
