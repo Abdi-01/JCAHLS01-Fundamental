@@ -267,11 +267,10 @@ function handlePay() {
             console.table(dbTransactions);
             printTransactions()
             // menghapus product yang selected = true
-            dbCart.forEach((val,index)=>{
-                if(val.selected){
-                    dbCart.splice(index,1);
-                }
-            })
+            // 1. mencari data yang selectd = false
+            let tempCart = dbCart.filter(val => val.selected == false)
+            // 2. menyimpan datanya ke dalam cart
+            dbCart = [...tempCart];
             printKeranjang();
             document.getElementById("message").innerHTML = `Kembalian anda ${count.toLocaleString()}<br/>Terima kasih ✅`
             document.getElementById("payment").value = ""
@@ -366,6 +365,29 @@ const handleDeleteCart = (sku) => {
 
     printProduct();
     printKeranjang();
+}
+
+const handleClearCart = () => {
+    // 1. cari sku product yang akan dihapus
+    let filter = dbCart.filter(val => val.selected == true)
+    // 2. hapus data pada dbcart
+    filter.forEach((val) => {
+        // mengembalikan qty ke stock product
+        let dataIdx = dbProduct.findIndex(valProduct => valProduct.sku == val.sku)
+
+        dbProduct[dataIdx].stock += val.qty
+        // Cara 1
+        dbCart.forEach((valCart, index) => {
+            if (val.sku == valCart.sku) {
+                dbCart.splice(index, 1)
+            }
+        })
+        // Cara 2
+        // let cartIdx = dbCart.findIndex(valCart => valCart.sku == val.sku)
+        // dbCart.splice(cartIdx, 1);
+    })
+    printKeranjang()
+    printProduct()
 }
 
 printKeranjang()
