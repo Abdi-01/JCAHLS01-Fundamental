@@ -225,7 +225,6 @@ function printKeranjang() {
         `
     })
 
-    totalPayment();
     document.getElementById("cart-list").innerHTML = htmlElement.join("");
 }
 
@@ -235,9 +234,10 @@ function handleSelect(sku) {
     totalPayment();
 }
 
+let total = 0;
 // fungsi terpisah
 function totalPayment() {
-    let total = 0;
+    total = 0;
     dbCart.forEach(val => {
         if (val.selected) {
             total += val.subTotal
@@ -261,12 +261,17 @@ function handlePay() {
                 date: `${new Date().getDate()}-${new Date().getMonth() + 1}-${new Date().getFullYear()}`,
                 total,
                 change: count,
-                detail: [...dbCart]
+                detail: dbCart.filter(val => val.selected == true)
             }
             dbTransactions.push(data);
             console.table(dbTransactions);
             printTransactions()
-            dbCart = [];
+            // menghapus product yang selected = true
+            dbCart.forEach((val,index)=>{
+                if(val.selected){
+                    dbCart.splice(index,1);
+                }
+            })
             printKeranjang();
             document.getElementById("message").innerHTML = `Kembalian anda ${count.toLocaleString()}<br/>Terima kasih ✅`
             document.getElementById("payment").value = ""
@@ -326,6 +331,7 @@ const handleIncrement = (sku) => {
         alert("Out Of Stock")
     }
     dbCart[cartIdx].subTotal = dbCart[cartIdx].qty * dbCart[cartIdx].price
+    totalPayment();
     printProduct()
     printKeranjang()
 }
@@ -341,6 +347,7 @@ const handleDecrement = (sku) => {
     } else {
         dbCart.splice(cartIdx, 1)
     }
+    totalPayment();
     printProduct()
     printKeranjang()
 }
