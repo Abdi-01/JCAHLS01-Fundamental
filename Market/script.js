@@ -29,6 +29,7 @@ console.log(dbCart)
 let dbTransactions = [];
 let username = "";
 
+
 let selectedIdx = null;
 let dataFilter = [];
 
@@ -240,22 +241,43 @@ function handlePay() {
     if (count < 0) {
         document.getElementById("message").innerHTML = "Maaf, uang anda kurang ⚠️"
     } else {
-
-        let data = {
-            idTransaction: dbTransactions.length + 1,
-            username,
-            date: `${new Date().getDate()}-${new Date().getMonth() + 1}-${new Date().getFullYear()}`,
-            total,
-            change: count,
-            detail: [...dbCart]
+        if (username) {
+            let data = {
+                idTransaction: dbTransactions.length + 1,
+                username,
+                date: `${new Date().getDate()}-${new Date().getMonth() + 1}-${new Date().getFullYear()}`,
+                total,
+                change: count,
+                detail: [...dbCart]
+            }
+            dbTransactions.push(data);
+            console.table(dbTransactions);
+            printTransactions()
+            dbCart = [];
+            printKeranjang();
+            document.getElementById("message").innerHTML = `Kembalian anda ${count.toLocaleString()}<br/>Terima kasih ✅`
+            document.getElementById("payment").value = ""
+        } else {
+            alert("Fill username form")
         }
-        dbTransactions.push(data);
-        console.table(dbTransactions);
-        dbCart = [];
-        printKeranjang();
-        document.getElementById("message").innerHTML = `Kembalian anda ${count.toLocaleString()}<br/>Terima kasih ✅`
-        document.getElementById("payment").value = ""
     }
+}
+
+function printTransactions() {
+    let omset = 0;
+    document.getElementById("report").innerHTML = dbTransactions.map((val, index) => {
+        omset += total;
+        return `
+        <tr>
+        <td>${index + 1}</td>
+        <td>${val.date}</td>
+        <td>${val.username}</td>
+        <td>${val.total}</td>
+        </tr>
+        `
+    });
+    document.getElementById("inUsername").value = "";
+    document.getElementById("omset").innerHTML = "Rp." + omset.toLocaleString()
 }
 
 function handleBuy(sku) {
