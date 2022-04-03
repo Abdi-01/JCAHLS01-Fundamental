@@ -207,12 +207,16 @@ function printKeranjang() {
         total += val.subTotal;
         return `
         <tr>
-            <td>${index + 1}</td>
+            <td><input type='checkbox' id="select-${val.sku}" onclick="handleSelect('${val.sku}')"/></td>
             <td>${val.sku}</td>
             <td><img src="${val.img}" width="75px"></td>
             <td>${val.name}</td>
             <td>IDR. ${val.price.toLocaleString()}</td>
-            <td>${val.qty.toLocaleString()}</td>
+            <td>
+            <button type="button" onclick="handleDecrement('${val.sku}')">-</button>
+            ${val.qty.toLocaleString()} 
+            <button type="button" onclick="handleIncrement('${val.sku}')">+</button>
+            </td>
             <td>IDR. ${val.subTotal.toLocaleString()}</td>
             <td>
             <button type="button" onclick="handleDeleteCart('${val.sku}')">Delete</button>
@@ -224,6 +228,12 @@ function printKeranjang() {
     // totalPayment();
     document.getElementById("total").innerHTML = `Rp. ${total.toLocaleString()},-`
     document.getElementById("cart-list").innerHTML = htmlElement.join("");
+}
+
+function handleSelect(sku) {
+    let checked = document.getElementById(`select-${sku}`).checked
+    console.log(checked)
+    console.log(sku)
 }
 
 // fungsi terpisah
@@ -302,7 +312,22 @@ function handleBuy(sku) {
     printKeranjang()
 }
 
-const handleDeleteCart = (sku) => {
+const handleIncrement = (sku) => {
+    let cartIdx = dbCart.findIndex(val => val.sku == sku);
+    let dataIdx = dbProduct.findIndex(val => val.sku == sku);
+    if (dbProduct[dataIdx].stock > 0) {
+        dbCart[cartIdx].qty += 1
+        dbProduct[dataIdx].stock -= 1
+    } else {
+        // dbProduct.splice(dataIdx, 1)
+        alert("Out Of Stock")
+    }
+    dbCart[cartIdx].subTotal = dbCart[cartIdx].qty * dbCart[cartIdx].price
+    printProduct()
+    printKeranjang()
+}
+
+const handleDecrement = (sku) => {
     let cartIdx = dbCart.findIndex(val => val.sku == sku);
     let dataIdx = dbProduct.findIndex(val => val.sku == sku);
 
@@ -316,4 +341,21 @@ const handleDeleteCart = (sku) => {
     printProduct()
     printKeranjang()
 }
+
+const handleDeleteCart = (sku) => {
+    // 1. Cari index product pada keranjang
+    let cartIdx = dbCart.findIndex(val => val.sku == sku);
+    // 2. Cari index product pada dbProduct
+    let dataIdx = dbProduct.findIndex(val => val.sku == sku);
+
+    // 3. mengembalikan stok barang dari keranjang ke dbProduct
+    dbProduct[dataIdx].stock += dbCart[cartIdx].qty;
+
+    // 4. menghapus data product pada keranjang
+    dbCart.splice(cartIdx, 1);
+
+    printProduct();
+    printKeranjang();
+}
+
 printKeranjang()
