@@ -200,15 +200,14 @@ function handleReset() {
 
 ////////////////////////// Manage Transaction //////////////////////////////////
 
-let total = 0;
-
 function printKeranjang() {
-    total = 0;
+    // total = 0;
     let htmlElement = dbCart.map((val, index) => {
-        total += val.subTotal;
+        // total += val.subTotal;
+        console.log(val.selected)
         return `
         <tr>
-            <td><input type='checkbox' id="select-${val.sku}" onclick="handleSelect('${val.sku}')"/></td>
+            <td><input type='checkbox' ${val.selected ? "checked" : ""} id="select-${val.sku}" onclick="handleSelect('${val.sku}')"/></td>
             <td>${val.sku}</td>
             <td><img src="${val.img}" width="75px"></td>
             <td>${val.name}</td>
@@ -226,21 +225,24 @@ function printKeranjang() {
         `
     })
 
-    // totalPayment();
-    document.getElementById("total").innerHTML = `Rp. ${total.toLocaleString()},-`
+    totalPayment();
     document.getElementById("cart-list").innerHTML = htmlElement.join("");
 }
 
 function handleSelect(sku) {
     let cartIdx = dbCart.findIndex(val => val.sku == sku);
     dbCart[cartIdx].selected = document.getElementById(`select-${sku}`).checked
-    console.table(dbCart)
+    totalPayment();
 }
 
 // fungsi terpisah
 function totalPayment() {
     let total = 0;
-    dbCart.forEach(val => total += val.subTotal)
+    dbCart.forEach(val => {
+        if (val.selected) {
+            total += val.subTotal
+        }
+    })
 
     document.getElementById("total").innerHTML = `Rp. ${total.toLocaleString()},-`
 }
