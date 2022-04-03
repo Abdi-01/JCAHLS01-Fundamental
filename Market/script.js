@@ -13,6 +13,7 @@ class Cart extends Product {
         super(_sku, _img, _name, null, null, _price)
         this.qty = _qty;
         this.subTotal = _price * _qty;
+        this.selected = false;
     }
 }
 
@@ -231,9 +232,9 @@ function printKeranjang() {
 }
 
 function handleSelect(sku) {
-    let checked = document.getElementById(`select-${sku}`).checked
-    console.log(checked)
-    console.log(sku)
+    let cartIdx = dbCart.findIndex(val => val.sku == sku);
+    dbCart[cartIdx].selected = document.getElementById(`select-${sku}`).checked
+    console.table(dbCart)
 }
 
 // fungsi terpisah
